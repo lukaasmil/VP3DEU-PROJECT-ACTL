@@ -1,0 +1,2166 @@
+
+<!DOCTYPE html>
+<html lang="cs" id="html-lang">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">VP3D - Profesionální 3D tisk</title>
+    <meta name="description" content="VP3D - Špičkové 3D tiskové služby, prototypování a výroba na zakázku">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Reset and Variables */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #151515;
+            --bg-card: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #666666;
+            --accent-red: #ff2c2c;
+            --accent-red-dark: #cc1f1f;
+            --accent-red-light: #ff4d4d;
+            --border-color: #333333;
+            --border-light: #404040;
+            --shadow-primary: 0 8px 32px rgba(255, 44, 44, 0.1);
+            --shadow-secondary: 0 4px 16px rgba(0, 0, 0, 0.3);
+            --gradient-primary: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            --gradient-accent: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-red-dark) 100%);
+            --font-primary: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Geometric Background Pattern */
+        .geometric-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.03;
+            background-image: 
+                linear-gradient(45deg, var(--accent-red) 1px, transparent 1px),
+                linear-gradient(-45deg, var(--accent-red) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav.scrolled {
+            background: rgba(0, 0, 0, 0.98);
+            box-shadow: var(--shadow-secondary);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .nav-logo {
+            font-family: var(--font-mono);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-red);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 10px rgba(255, 44, 44, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .nav-logo:hover {
+            text-shadow: 0 0 20px var(--accent-red);
+            transform: scale(1.05);
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--text-primary);
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            width: 100%;
+        }
+
+        /* Language Switcher */
+        .lang-switcher {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 8px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .lang-switcher:hover {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        .lang-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .nav-toggle .bar {
+            width: 25px;
+            height: 3px;
+            background: var(--text-primary);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: var(--gradient-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff2c2c' fill-opacity='0.05'%3E%3Cpolygon points='30,0 60,30 30,60 0,30'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+            animation: pattern-move 30s linear infinite;
+        }
+
+        @keyframes pattern-move {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(60px) translateY(60px); }
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1s ease 0.2s forwards;
+        }
+
+        .hero-text h1 .accent {
+            color: var(--accent-red);
+            font-family: var(--font-mono);
+        }
+
+        .hero-text .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease 0.6s forwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease 1s forwards;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient-accent);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(255, 44, 44, 0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--border-light);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-secondary);
+        }
+
+        /* Enhanced 3D Animation */
+        .hero-visual {
+            opacity: 0;
+            transform: translateX(50px);
+            animation: fadeInRight 1s ease 1.2s forwards;
+            position: relative;
+        }
+
+        .manufacturing-system {
+            width: 400px;
+            height: 400px;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 3D Printer */
+        .printer-frame {
+            width: 240px;
+            height: 200px;
+            background: linear-gradient(135deg, #2a2a2a, #3f3f3f);
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+            border: 2px solid #444;
+        }
+
+        .printer-frame::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 15px;
+            right: 15px;
+            height: 8px;
+            background: linear-gradient(90deg, #333, #555);
+            border-radius: 4px 4px 0 0;
+        }
+
+        .print-bed {
+            width: 160px;
+            height: 12px;
+            background: linear-gradient(135deg, #666, #888);
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 6px;
+            border: 1px solid #555;
+        }
+
+        .extruder-assembly {
+            width: 35px;
+            height: 30px;
+            background: var(--accent-red);
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 6px;
+            animation: extruder-precision 6s ease-in-out infinite;
+            box-shadow: 0 5px 15px rgba(255, 44, 44, 0.4);
+        }
+
+        .extruder-assembly::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 12px;
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+        @keyframes extruder-precision {
+            0%, 100% { 
+                transform: translateX(-50%) translateY(0); 
+            }
+            16% { 
+                transform: translateX(-25px) translateY(-5px); 
+            }
+            33% { 
+                transform: translateX(25px) translateY(-3px); 
+            }
+            50% { 
+                transform: translateX(10px) translateY(-8px); 
+            }
+            66% { 
+                transform: translateX(-10px) translateY(-4px); 
+            }
+            83% { 
+                transform: translateX(0px) translateY(-6px); 
+            }
+        }
+
+        .material-flow {
+            width: 2px;
+            height: 15px;
+            background: linear-gradient(180deg, var(--accent-red-light), var(--accent-red));
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: material-extrusion 6s ease-in-out infinite;
+            border-radius: 2px;
+        }
+
+        @keyframes material-extrusion {
+            0%, 20%, 100% { opacity: 0; height: 4px; }
+            10%, 90% { opacity: 1; height: 15px; }
+            50% { opacity: 0.8; height: 12px; }
+        }
+
+        /* Building Object */
+        .build-object {
+            position: absolute;
+            bottom: 42px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+        }
+
+        .build-layer {
+            width: 40px;
+            height: 3px;
+            background: var(--accent-red);
+            margin: 1px 0;
+            border-radius: 2px;
+            opacity: 0;
+            animation: layer-formation 12s ease-in-out infinite;
+            box-shadow: 0 0 6px rgba(255, 44, 44, 0.3);
+        }
+
+        .build-layer:nth-child(1) { animation-delay: 0s; width: 30px; }
+        .build-layer:nth-child(2) { animation-delay: 1s; width: 35px; }
+        .build-layer:nth-child(3) { animation-delay: 2s; width: 40px; }
+        .build-layer:nth-child(4) { animation-delay: 3s; width: 40px; }
+        .build-layer:nth-child(5) { animation-delay: 4s; width: 35px; }
+        .build-layer:nth-child(6) { animation-delay: 5s; width: 30px; }
+
+        @keyframes layer-formation {
+            0%, 95% { opacity: 0; width: 8px; }
+            5%, 90% { opacity: 1; }
+            10% { width: var(--layer-width, 30px); }
+        }
+
+        /* Status Indicators */
+        .status-indicator {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 10px;
+            height: 10px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: status-blink 2s ease-in-out infinite;
+            box-shadow: 0 0 8px #00ff88;
+        }
+
+        @keyframes status-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .section-title.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--gradient-accent);
+            border-radius: 2px;
+        }
+
+        /* About Section - Minimalistic */
+        .about {
+            background: var(--bg-secondary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(255, 44, 44, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 4rem;
+            align-items: start;
+            position: relative;
+            z-index: 2;
+        }
+
+        .about-left {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: all 0.8s ease;
+        }
+
+        .about-left.animate {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .about-description {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+        }
+
+        .about-points {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .point-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .point-item:hover {
+            padding-left: 1rem;
+            border-bottom-color: var(--accent-red);
+        }
+
+        .point-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 4px;
+            height: 0;
+            background: var(--accent-red);
+            transition: height 0.3s ease;
+            transform: translateY(-50%);
+        }
+
+        .point-item:hover::before {
+            height: 100%;
+        }
+
+        .point-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .point-item:hover .point-icon {
+            transform: scale(1.2);
+        }
+
+        .point-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .about-stats {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-secondary);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+            position: relative;
+            overflow: hidden;
+            height: fit-content;
+        }
+
+        .about-stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-accent);
+        }
+
+        .about-stats.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stat-item {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-red);
+            font-family: var(--font-mono);
+            display: block;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px rgba(255, 44, 44, 0.3);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Enhanced Services Section */
+        .services {
+            background: var(--bg-primary);
+            position: relative;
+        }
+
+        .services::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 80% 20%, rgba(255, 44, 44, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .services-intro {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .services-intro.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .services-intro p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 2.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .service-card {
+            background: var(--bg-card);
+            padding: 3rem 2.5rem;
+            border-radius: 20px;
+            border: 2px solid var(--border-color);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            box-shadow: var(--shadow-secondary);
+        }
+
+        .service-card.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-accent);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+            transform-origin: left;
+        }
+
+        .service-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 44, 44, 0.05) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-red);
+            box-shadow: var(--shadow-primary);
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-card:hover::after {
+            opacity: 1;
+        }
+
+        .service-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-right: 1rem;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 0 10px rgba(255, 44, 44, 0.3));
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .service-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .service-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .service-features li {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .service-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-red);
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        /* Portfolio Section - Enhanced */
+        .portfolio {
+            background: var(--bg-secondary);
+            position: relative;
+        }
+
+        .portfolio::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 70% 30%, rgba(255, 44, 44, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .portfolio-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+
+        .portfolio-subtitle.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .portfolio-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .portfolio-item {
+            background: var(--bg-card);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+            position: relative;
+            opacity: 0;
+            transform: scale(0.95);
+            box-shadow: var(--shadow-secondary);
+        }
+
+        .portfolio-item.animate {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .portfolio-item:hover {
+            transform: scale(1.02) translateY(-8px);
+            border-color: var(--accent-red);
+            box-shadow: var(--shadow-primary);
+        }
+
+        .portfolio-image {
+            position: relative;
+            height: 280px;
+            overflow: hidden;
+            background: var(--bg-tertiary);
+        }
+
+        .portfolio-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .portfolio-item:hover .portfolio-image img {
+            transform: scale(1.08);
+        }
+
+        .portfolio-image.placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, #2a2a2a 100%);
+            position: relative;
+        }
+
+        .portfolio-image.placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ff2c2c' fill-opacity='0.08'%3E%3Cpath d='M20 0L40 20L20 40L0 20z'/%3E%3C/g%3E%3C/svg%3E") repeat;
+            opacity: 0.4;
+        }
+
+        .placeholder-content {
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .placeholder-icon {
+            font-size: 3.5rem;
+            color: var(--accent-red);
+            margin-bottom: 1rem;
+            display: block;
+            filter: drop-shadow(0 0 10px rgba(255, 44, 44, 0.3));
+        }
+
+        .portfolio-info {
+            padding: 2rem;
+            background: var(--bg-card);
+        }
+
+        .portfolio-title {
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .portfolio-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .portfolio-specs {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .spec-tag {
+            background: rgba(255, 44, 44, 0.1);
+            color: var(--accent-red);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
+            font-weight: 500;
+            border: 1px solid rgba(255, 44, 44, 0.2);
+        }
+
+        .portfolio-overlay {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            color: var(--accent-red);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-item:hover .portfolio-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Contact Section */
+        .contact {
+            background: var(--bg-primary);
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .contact-info {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: all 0.8s ease;
+        }
+
+        .contact-info.animate {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .contact-info h3 {
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .contact-info p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .contact-details {
+            space-y: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .contact-item strong {
+            color: var(--accent-red);
+            margin-right: 0.5rem;
+            min-width: 80px;
+        }
+
+        .contact-form {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-secondary);
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.8s ease;
+        }
+
+        .contact-form.animate {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px 20px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-red);
+            box-shadow: 0 0 0 3px rgba(255, 44, 44, 0.1);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 50px 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .hero-content,
+            .about-content,
+            .contact-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                text-align: center;
+            }
+
+            .hero-visual {
+                order: -1;
+            }
+
+            .manufacturing-system {
+                width: 320px;
+                height: 320px;
+            }
+
+            .printer-frame {
+                width: 200px;
+                height: 160px;
+            }
+
+            .nav-content {
+                gap: 1rem;
+            }
+
+            .nav-menu {
+                gap: 1.5rem;
+            }
+
+            .hero-text h1 {
+                font-size: 2.8rem;
+            }
+
+            .section-title {
+                font-size: 2.4rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 80px;
+                flex-direction: column;
+                background: rgba(0, 0, 0, 0.98);
+                backdrop-filter: blur(20px);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                padding: 2rem 0;
+                border-bottom: 1px solid var(--border-color);
+                gap: 1rem;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .nav-toggle {
+                display: flex;
+            }
+
+            .nav-content {
+                gap: 1rem;
+            }
+
+            .hero-content {
+                gap: 2rem;
+            }
+
+            .hero-text h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero-text .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .manufacturing-system {
+                width: 280px;
+                height: 280px;
+            }
+
+            .printer-frame {
+                width: 180px;
+                height: 140px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .btn {
+                width: 200px;
+                text-align: center;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .portfolio-gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .service-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .section {
+                padding: 60px 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .hero-text h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero-text .subtitle {
+                font-size: 1rem;
+            }
+
+            .section {
+                padding: 50px 0;
+            }
+
+            .nav-container {
+                padding: 0 15px;
+                height: 70px;
+            }
+
+            .nav-logo {
+                font-size: 1.6rem;
+            }
+
+            .lang-switcher {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+
+            .lang-icon {
+                width: 16px;
+                height: 16px;
+                font-size: 10px;
+            }
+
+            .portfolio-gallery {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .portfolio-item {
+                border-radius: 12px;
+            }
+
+            .portfolio-info {
+                padding: 1.5rem;
+            }
+
+            .manufacturing-system {
+                width: 240px;
+                height: 240px;
+            }
+
+            .printer-frame {
+                width: 160px;
+                height: 120px;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Hidden class for language switching */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="geometric-bg"></div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo">VP3D</a>
+            <div class="nav-content">
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="#home" class="nav-link active" data-cs="Domů" data-en="Home">Domů</a></li>
+                    <li><a href="#about" class="nav-link" data-cs="O nás" data-en="About">O nás</a></li>
+                    <li><a href="#services" class="nav-link" data-cs="Služby" data-en="Services">Služby</a></li>
+                    <li><a href="#portfolio" class="nav-link" data-cs="Portfolio" data-en="Portfolio">Portfolio</a></li>
+                    <li><a href="#contact" class="nav-link" data-cs="Kontakt" data-en="Contact">Kontakt</a></li>
+                </ul>
+                <button class="lang-switcher" id="lang-switcher">
+                    <div class="lang-icon">🇨🇿</div>
+                    <span id="lang-text">CS</span>
+                </button>
+            </div>
+            <div class="nav-toggle" id="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>
+                        <span data-cs="Budoucnost" data-en="The future of">Budoucnost</span> <span class="accent">3D</span> <span data-cs="tisku začíná zde" data-en="printing starts here">tisku začíná zde</span>
+                    </h1>
+                    <p class="subtitle" data-cs="Špičková technologie pro prototypování, výrobu na zakázku a inovativní řešení" data-en="Cutting-edge technology for prototyping, custom manufacturing and innovative solutions">
+                        Špičková technologie pro prototypování, výrobu na zakázku a inovativní řešení
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#portfolio" class="btn btn-primary" data-cs="Naše práce" data-en="Our work">Naše práce</a>
+                        <a href="#contact" class="btn btn-secondary" data-cs="Kontaktujte nás" data-en="Contact us">Kontaktujte nás</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="manufacturing-system">
+                        <div class="printer-frame">
+                            <div class="status-indicator"></div>
+                            <div class="print-bed"></div>
+                            <div class="extruder-assembly">
+                                <div class="material-flow"></div>
+                            </div>
+                            <div class="build-object">
+                                <div class="build-layer"></div>
+                                <div class="build-layer"></div>
+                                <div class="build-layer"></div>
+                                <div class="build-layer"></div>
+                                <div class="build-layer"></div>
+                                <div class="build-layer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section about">
+        <div class="container">
+            <h2 class="section-title" data-cs="O nás" data-en="About us">O nás</h2>
+            <div class="about-content">
+                <div class="about-left">
+                    <p class="about-description" data-cs="Specializujeme se na profesionální 3D tisk s důrazem na kvalitu, přesnost a inovace. Používáme pokročilé materiály jako PLA, PETG, TPU, PC a ASA pro širokou škálu aplikací." data-en="We specialize in professional 3D printing with emphasis on quality, precision and innovation. We use advanced materials like PLA, PETG, TPU, PC and ASA for a wide range of applications.">
+                        Specializujeme se na profesionální 3D tisk s důrazem na kvalitu, přesnost a inovace. Používáme pokročilé materiály jako PLA, PETG, TPU, PC a ASA pro širokou škálu aplikací.
+                    </p>
+                    <div class="about-points">
+                        <div class="point-item">
+                            <span class="point-icon">🚀</span>
+                            <span class="point-text" data-cs="Špičková 3D tisková technologie" data-en="Cutting-edge 3D printing technology">Špičková 3D tisková technologie</span>
+                        </div>
+                        <div class="point-item">
+                            <span class="point-icon">⚡</span>
+                            <span class="point-text" data-cs="Rychlé prototypování a sériová výroba" data-en="Rapid prototyping and series production">Rychlé prototypování a sériová výroba</span>
+                        </div>
+                        <div class="point-item">
+                            <span class="point-icon">🧪</span>
+                            <span class="point-text" data-cs="Široká škála 3D tiskových materiálů" data-en="Wide range of 3D printing materials">Široká škála 3D tiskových materiálů</span>
+                        </div>
+                        <div class="point-item">
+                            <span class="point-icon">✅</span>
+                            <span class="point-text" data-cs="Nejpřísnější průmyslové standardy kvality" data-en="Strictest industrial quality standards">Nejpřísnější průmyslové standardy kvality</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">36+</span>
+                        <span class="stat-label" data-cs="Dokončených projektů" data-en="Completed projects">Dokončených projektů</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">97%</span>
+                        <span class="stat-label" data-cs="Spokojenost klientů" data-en="Client satisfaction">Spokojenost klientů</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">4h</span>
+                        <span class="stat-label" data-cs="Průměrná doba odezvy" data-en="Average response time">Průměrná doba odezvy</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="section services">
+        <div class="container">
+            <h2 class="section-title" data-cs="Naše služby" data-en="Our services">Naše služby</h2>
+            <div class="services-intro">
+                <p data-cs="Poskytujeme kompletní řešení 3D tisku od návrhu po finální výrobek s nejvyšší kvalitou a přesností" data-en="We provide complete 3D printing solutions from design to final product with the highest quality and precision">
+                    Poskytujeme kompletní řešení 3D tisku od návrhu po finální výrobek s nejvyšší kvalitou a přesností
+                </p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-header">
+                        <span class="service-icon">🔬</span>
+                        <h3 class="service-title" data-cs="Rychlé prototypování" data-en="Rapid prototyping">Rychlé prototypování</h3>
+                    </div>
+                    <p class="service-description" data-cs="Od návrhu k funkčnímu prototypu během několika hodin. Ideální pro testování konceptů a iterativní vývoj." data-en="From design to functional prototype in hours. Ideal for concept testing and iterative development.">
+                        Od návrhu k funkčnímu prototypu během několika hodin. Ideální pro testování konceptů a iterativní vývoj.
+                    </p>
+                    <ul class="service-features">
+                        <li data-cs="Rychlé dodání do 24 hodin" data-en="Fast delivery within 24 hours">Rychlé dodání do 24 hodin</li>
+                        <li data-cs="Vysoká přesnost prototypů" data-en="High prototype precision">Vysoká přesnost prototypů</li>
+                        <li data-cs="Široká škála materiálů" data-en="Wide range of materials">Široká škála materiálů</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-header">
+                        <span class="service-icon">⚙️</span>
+                        <h3 class="service-title" data-cs="Sériová výroba" data-en="Series production">Sériová výroba</h3>
+                    </div>
+                    <p class="service-description" data-cs="Profesionální výroba malých a středních sérií s konzistentní kvalitou a dodržením termínů dodání." data-en="Professional production of small and medium series with consistent quality and delivery deadlines.">
+                        Profesionální výroba malých a středních sérií s konzistentní kvalitou a dodržením termínů dodání.
+                    </p>
+                    <ul class="service-features">
+                        <li data-cs="Konzistentní kvalita napříč sérií" data-en="Consistent quality across series">Konzistentní kvalita napříč sérií</li>
+                        <li data-cs="Kontrola kvality každého kusu" data-en="Quality control of every piece">Kontrola kvality každého kusu</li>
+                        <li data-cs="Flexibilní objemy výroby" data-en="Flexible production volumes">Flexibilní objemy výroby</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-header">
+                        <span class="service-icon">💡</span>
+                        <h3 class="service-title" data-cs="Design konzultace" data-en="Design consultation">Design konzultace</h3>
+                    </div>
+                    <p class="service-description" data-cs="Optimalizace návrhů pro 3D tisk, výběr materiálů a technické poradenství od našich expertů." data-en="Design optimization for 3D printing, material selection and technical consulting from our experts.">
+                        Optimalizace návrhů pro 3D tisk, výběr materiálů a technické poradenství od našich expertů.
+                    </p>
+                    <ul class="service-features">
+                        <li data-cs="Optimalizace pro 3D tisk" data-en="Optimization for 3D printing">Optimalizace pro 3D tisk</li>
+                        <li data-cs="Výběr vhodných materiálů" data-en="Selection of suitable materials">Výběr vhodných materiálů</li>
+                        <li data-cs="Technické poradenství" data-en="Technical consulting">Technické poradenství</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="section portfolio">
+        <div class="container">
+            <h2 class="section-title" data-cs="Naše práce" data-en="Our work">Naše práce</h2>
+            <p class="portfolio-subtitle" data-cs="Příklady našich realizovaných 3D tisků a projektů" data-en="Examples of our realized 3D prints and projects">Příklady našich realizovaných 3D tisků a projektů</p>
+            <div class="portfolio-gallery">
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="NOVÝ PROJEKT" data-en="NEW PROJECT">NOVÝ PROJEKT</div>
+                    <div class="portfolio-image">
+                        <img src="/lovable-uploads/54c9f45a-717b-43ad-a4e2-cb7635125072.png" alt="Precision 3D printed part" />
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Precizní mechanická součást" data-en="Precision mechanical part">Precizní mechanická součást</h4>
+                        <p class="portfolio-description" data-cs="Vysoce přesná součást vyrobená pro průmyslové použití s tolerancí ±0.1mm" data-en="High precision part manufactured for industrial use with ±0.1mm tolerance">Vysoce přesná součást vyrobená pro průmyslové použití s tolerancí ±0.1mm</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">PLA+</span>
+                            <span class="spec-tag">85mm</span>
+                            <span class="spec-tag">±0.1mm</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="PROTOTYP" data-en="PROTOTYPE">PROTOTYP</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">⚙️</span>
+                            <h4 data-cs="Funkční prototyp" data-en="Functional prototype">Funkční prototyp</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Pohyblivý mechanismus" data-en="Moving mechanism">Pohyblivý mechanismus</h4>
+                        <p class="portfolio-description" data-cs="Komplexní prototyp s pohyblivými díly pro testování funkcionalit" data-en="Complex prototype with moving parts for functionality testing">Komplexní prototyp s pohyblivými díly pro testování funkcionalit</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">PETG</span>
+                            <span class="spec-tag">Multi-part</span>
+                            <span class="spec-tag">Functional</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="PRŮMYSL" data-en="INDUSTRIAL">PRŮMYSL</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">🏭</span>
+                            <h4 data-cs="Průmyslový díl" data-en="Industrial part">Průmyslový díl</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Vysokopevnostní komponenta" data-en="High-strength component">Vysokopevnostní komponenta</h4>
+                        <p class="portfolio-description" data-cs="Díl z kompozitního materiálu pro náročné průmyslové prostředí" data-en="Composite material part for demanding industrial environments">Díl z kompozitního materiálu pro náročné průmyslové prostředí</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">ASA</span>
+                            <span class="spec-tag">High Strength</span>
+                            <span class="spec-tag">Industrial</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="ZAKÁZKA" data-en="CUSTOM">ZAKÁZKA</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">🎯</span>
+                            <h4 data-cs="Zakázkový projekt" data-en="Custom project">Zakázkový projekt</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Flexibilní těsnění" data-en="Flexible seal">Flexibilní těsnění</h4>
+                        <p class="portfolio-description" data-cs="Speciální elastomerní díl pro unikátní aplikaci zákazníka" data-en="Special elastomeric part for unique customer application">Speciální elastomerní díl pro unikátní aplikaci zákazníka</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">TPU</span>
+                            <span class="spec-tag">Flexible</span>
+                            <span class="spec-tag">Custom</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="PŘESNOST" data-en="PRECISION">PŘESNOST</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">🔬</span>
+                            <h4 data-cs="Technický díl" data-en="Technical part">Technický díl</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Precizní nástroj" data-en="Precision tool">Precizní nástroj</h4>
+                        <p class="portfolio-description" data-cs="Vysoce přesný nástroj s profesionální povrchovou úpravou" data-en="High precision tool with professional surface finish">Vysoce přesný nástroj s profesionální povrchovou úpravou</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">PC</span>
+                            <span class="spec-tag">Precision</span>
+                            <span class="spec-tag">Tool</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="ELEKTRONIKA" data-en="ELECTRONICS">ELEKTRONIKA</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">⚡</span>
+                            <h4 data-cs="Elektronická krabička" data-en="Electronic case">Elektronická krabička</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Ochranné pouzdro pro elektroniku" data-en="Protective case for electronics">Ochranné pouzdro pro elektroniku</h4>
+                        <p class="portfolio-description" data-cs="Antistatické pouzdro pro citlivé elektronické komponenty" data-en="Antistatic case for sensitive electronic components">Antistatické pouzdro pro citlivé elektronické komponenty</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">ASA</span>
+                            <span class="spec-tag">Antistatic</span>
+                            <span class="spec-tag">Electronics</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="MODELOVÁNÍ" data-en="MODELING">MODELOVÁNÍ</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">🎨</span>
+                            <h4 data-cs="Architektonický model" data-en="Architectural model">Architektonický model</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Detailní architektonický model" data-en="Detailed architectural model">Detailní architektonický model</h4>
+                        <p class="portfolio-description" data-cs="Přesný model budovy s jemnými detaily pro prezentaci" data-en="Accurate building model with fine details for presentation">Přesný model budovy s jemnými detaily pro prezentaci</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">PLA</span>
+                            <span class="spec-tag">High Detail</span>
+                            <span class="spec-tag">Model</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="AUTOMOBILOVÝ" data-en="AUTOMOTIVE">AUTOMOBILOVÝ</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">🚗</span>
+                            <h4 data-cs="Automobilový díl" data-en="Automotive part">Automobilový díl</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Náhradní díl do vozu" data-en="Automotive replacement part">Náhradní díl do vozu</h4>
+                        <p class="portfolio-description" data-cs="Odolný náhradní díl pro automobilový průmysl" data-en="Durable replacement part for automotive industry">Odolný náhradní díl pro automobilový průmysl</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">ASA</span>
+                            <span class="spec-tag">UV Resistant</span>
+                            <span class="spec-tag">Automotive</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="MEDICÍNA" data-en="MEDICAL">MEDICÍNA</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">🏥</span>
+                            <h4 data-cs="Medicínský nástroj" data-en="Medical tool">Medicínský nástroj</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Sterilizovatelný medicínský nástroj" data-en="Sterilizable medical tool">Sterilizovatelný medicínský nástroj</h4>
+                        <p class="portfolio-description" data-cs="Nástroj pro medicínské aplikace odolný vůči sterilizaci" data-en="Tool for medical applications resistant to sterilization">Nástroj pro medicínské aplikace odolný vůči sterilizaci</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">PETG</span>
+                            <span class="spec-tag">Medical Grade</span>
+                            <span class="spec-tag">Sterilizable</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="SPORT" data-en="SPORT">SPORT</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">🏆</span>
+                            <h4 data-cs="Sportovní vybavení" data-en="Sports equipment">Sportovní vybavení</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Vlastní sportovní držák" data-en="Custom sports holder">Vlastní sportovní držák</h4>
+                        <p class="portfolio-description" data-cs="Lehký a odolný držák pro sportovní aktivity" data-en="Lightweight and durable holder for sports activities">Lehký a odolný držák pro sportovní aktivity</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">TPU</span>
+                            <span class="spec-tag">Flexible</span>
+                            <span class="spec-tag">Sports</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="VZDĚLÁVÁNÍ" data-en="EDUCATION">VZDĚLÁVÁNÍ</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">📚</span>
+                            <h4 data-cs="Vzdělávací model" data-en="Educational model">Vzdělávací model</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Interaktivní učební pomůcka" data-en="Interactive learning aid">Interaktivní učební pomůcka</h4>
+                        <p class="portfolio-description" data-cs="Model pro názornou výuku s pohyblivými částmi" data-en="Model for visual teaching with moving parts">Model pro názornou výuku s pohyblivými částmi</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">PLA</span>
+                            <span class="spec-tag">Educational</span>
+                            <span class="spec-tag">Interactive</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="DOMÁCNOST" data-en="HOUSEHOLD">DOMÁCNOST</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">🏠</span>
+                            <h4 data-cs="Domácí řešení" data-en="Home solution">Domácí řešení</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Praktický organizér" data-en="Practical organizer">Praktický organizér</h4>
+                        <p class="portfolio-description" data-cs="Řešení pro úschovu a organizaci domácích potřeb" data-en="Solution for storage and organization of household items">Řešení pro úschovu a organizaci domácích potřeb</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">PETG</span>
+                            <span class="spec-tag">Household</span>
+                            <span class="spec-tag">Organizer</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="KLENOTY" data-en="JEWELRY">KLENOTY</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">💎</span>
+                            <h4 data-cs="Klenotnický model" data-en="Jewelry model">Klenotnický model</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Master model pro odlévání" data-en="Master model for casting">Master model pro odlévání</h4>
+                        <p class="portfolio-description" data-cs="Vysoce detailní model pro výrobu šperků" data-en="Highly detailed model for jewelry production">Vysoce detailní model pro výrobu šperků</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">Resin</span>
+                            <span class="spec-tag">High Detail</span>
+                            <span class="spec-tag">Jewelry</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="LETECTVÍ" data-en="AEROSPACE">LETECTVÍ</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">✈️</span>
+                            <h4 data-cs="Letecký díl" data-en="Aerospace part">Letecký díl</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Lehká komponenta pro letectví" data-en="Lightweight aerospace component">Lehká komponenta pro letectví</h4>
+                        <p class="portfolio-description" data-cs="Ultralehký díl s vysokou pevností pro letecké aplikace" data-en="Ultra-lightweight part with high strength for aerospace applications">Ultralehký díl s vysokou pevností pro letecké aplikace</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">PC</span>
+                            <span class="spec-tag">Lightweight</span>
+                            <span class="spec-tag">Aerospace</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="UMĚNÍ" data-en="ART">UMĚNÍ</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">🎭</span>
+                            <h4 data-cs="Umělecký objekt" data-en="Art object">Umělecký objekt</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Dekorativní skulptura" data-en="Decorative sculpture">Dekorativní skulptura</h4>
+                        <p class="portfolio-description" data-cs="Složitá umělecká struktura s jemnými detaily" data-en="Complex artistic structure with fine details">Složitá umělecká struktura s jemnými detaily</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">PLA+</span>
+                            <span class="spec-tag">Artistic</span>
+                            <span class="spec-tag">Complex</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="STROJÍRENSTVÍ" data-en="ENGINEERING">STROJÍRENSTVÍ</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">⚙️</span>
+                            <h4 data-cs="Strojní díl" data-en="Machine part">Strojní díl</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Speciální převodová součást" data-en="Special gear component">Speciální převodová součást</h4>
+                        <p class="portfolio-description" data-cs="Přesná součást převodovky s vysokými nároky na toleranci" data-en="Precise gearbox component with high tolerance requirements">Přesná součást převodovky s vysokými nároky na toleranci</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">ASA</span>
+                            <span class="spec-tag">Precision</span>
+                            <span class="spec-tag">Engineering</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="ROBOTIKA" data-en="ROBOTICS">ROBOTIKA</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">🤖</span>
+                            <h4 data-cs="Robotický díl" data-en="Robotic part">Robotický díl</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Komponenta pro robotické rameno" data-en="Robotic arm component">Komponenta pro robotické rameno</h4>
+                        <p class="portfolio-description" data-cs="Lehký a pevný díl pro robotické aplikace" data-en="Lightweight and strong part for robotic applications">Lehký a pevný díl pro robotické aplikace</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">PC</span>
+                            <span class="spec-tag">Lightweight</span>
+                            <span class="spec-tag">Robotics</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="TEXTIL" data-en="TEXTILE">TEXTIL</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">🧵</span>
+                            <h4 data-cs="Textilní aplikace" data-en="Textile application">Textilní aplikace</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Flexibilní spona pro textil" data-en="Flexible textile clip">Flexibilní spona pro textil</h4>
+                        <p class="portfolio-description" data-cs="Elastická spojka pro textilní aplikace" data-en="Elastic connector for textile applications">Elastická spojka pro textilní aplikace</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">TPU</span>
+                            <span class="spec-tag">Elastic</span>
+                            <span class="spec-tag">Textile</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="portfolio-overlay" data-cs="ZEMĚDĚLSTVÍ" data-en="AGRICULTURE">ZEMĚDĚLSTVÍ</div>
+                    <div class="portfolio-image placeholder">
+                        <div class="placeholder-content">
+                            <span class="placeholder-icon">🌱</span>
+                            <h4 data-cs="Zemědělský nástroj" data-en="Agricultural tool">Zemědělský nástroj</h4>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4 class="portfolio-title" data-cs="Odolný díl pro zemědělství" data-en="Durable agricultural part">Odolný díl pro zemědělství</h4>
+                        <p class="portfolio-description" data-cs="Komponenta odolná vůči povětrnosti pro venkovní použití" data-en="Weather-resistant component for outdoor use">Komponenta odolná vůči povětrnosti pro venkovní použití</p>
+                        <div class="portfolio-specs">
+                            <span class="spec-tag">ASA</span>
+                            <span class="spec-tag">Weather Resistant</span>
+                            <span class="spec-tag">Agriculture</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section contact">
+        <div class="container">
+            <h2 class="section-title" data-cs="Kontakt" data-en="Contact">Kontakt</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3 data-cs="Pojďme realizovat váš projekt" data-en="Let's realize your project">Pojďme realizovat váš projekt</h3>
+                    <p data-cs="Máte nápad, který chcete přeměnit ve skutečnost? Kontaktujte nás pro konzultaci a nezávaznou cenovou nabídku. Náš tým expertů je připraven pomoci s jakýmkoliv projektem." data-en="Do you have an idea you want to turn into reality? Contact us for consultation and a non-binding quote. Our team of experts is ready to help with any project.">
+                        Máte nápad, který chcete přeměnit ve skutečnost? Kontaktujte nás pro konzultaci a nezávaznou cenovou nabídku. Náš tým expertů je připraven pomoci s jakýmkoliv projektem.
+                    </p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <strong>Email:</strong> info@vp3d.eu
+                        </div>
+                        <div class="contact-item">
+                            <strong data-cs="Telefon:" data-en="Phone:">Telefon:</strong> +420 123 456 789
+                        </div>
+                        <div class="contact-item">
+                            <strong data-cs="Hodiny:" data-en="Hours:">Hodiny:</strong> <span data-cs="Po-Pá 7:00-18:00" data-en="Mon-Fri 7:00-18:00">Po-Pá 7:00-18:00</span>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form" id="contact-form">
+                    <div class="form-group">
+                        <input type="text" name="name" placeholder="Vaše jméno" data-placeholder-cs="Vaše jméno" data-placeholder-en="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" placeholder="Váš email" data-placeholder-cs="Váš email" data-placeholder-en="Your email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="subject" placeholder="Typ projektu" data-placeholder-cs="Typ projektu" data-placeholder-en="Project type" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea name="message" placeholder="Popište váš projekt a požadavky..." data-placeholder-cs="Popište váš projekt a požadavky..." data-placeholder-en="Describe your project and requirements..." rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-cs="Odeslat poptávku" data-en="Send inquiry">Odeslat poptávku</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-text" data-cs="© 2025 VP3D. Všechna práva vyhrazena." data-en="© 2025 VP3D. All rights reserved.">© 2025 VP3D. Všechna práva vyhrazena.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Language switching functionality
+        let currentLang = 'cs';
+        
+        function switchLanguage() {
+            currentLang = currentLang === 'cs' ? 'en' : 'cs';
+            
+            // Update all elements with language data attributes
+            const elements = document.querySelectorAll('[data-cs][data-en]');
+            elements.forEach(element => {
+                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                    element.placeholder = element.getAttribute(`data-placeholder-${currentLang}`);
+                } else {
+                    element.textContent = element.getAttribute(`data-${currentLang}`);
+                }
+            });
+            
+            // Update language switcher
+            const langIcon = document.querySelector('.lang-icon');
+            const langText = document.getElementById('lang-text');
+            const htmlLang = document.getElementById('html-lang');
+            const pageTitle = document.getElementById('page-title');
+            
+            if (currentLang === 'en') {
+                langIcon.textContent = '🇺🇸';
+                langText.textContent = 'EN';
+                htmlLang.setAttribute('lang', 'en');
+                pageTitle.textContent = 'VP3D - Professional 3D Printing';
+            } else {
+                langIcon.textContent = '🇨🇿';
+                langText.textContent = 'CS';
+                htmlLang.setAttribute('lang', 'cs');
+                pageTitle.textContent = 'VP3D - Profesionální 3D tisk';
+            }
+        }
+
+        // Navigation functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const nav = document.getElementById('nav');
+            const navToggle = document.getElementById('nav-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const langSwitcher = document.getElementById('lang-switcher');
+
+            // Language switcher event
+            langSwitcher.addEventListener('click', switchLanguage);
+
+            // Mobile menu toggle
+            navToggle.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+                
+                // Animate hamburger menu
+                const bars = navToggle.querySelectorAll('.bar');
+                if (navMenu.classList.contains('active')) {
+                    bars[0].style.transform = 'rotate(-45deg) translate(-5px, 6px)';
+                    bars[1].style.opacity = '0';
+                    bars[2].style.transform = 'rotate(45deg) translate(-5px, -6px)';
+                } else {
+                    bars[0].style.transform = 'none';
+                    bars[1].style.opacity = '1';
+                    bars[2].style.transform = 'none';
+                }
+            });
+
+            // Close mobile menu when clicking on a link
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    navMenu.classList.remove('active');
+                    const bars = navToggle.querySelectorAll('.bar');
+                    bars[0].style.transform = 'none';
+                    bars[1].style.opacity = '1';
+                    bars[2].style.transform = 'none';
+                });
+            });
+
+            // Smooth scrolling and active link highlighting
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    
+                    if (targetSection) {
+                        const offsetTop = targetSection.offsetTop - 80;
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Scroll effects
+            function handleScroll() {
+                const scrollY = window.scrollY;
+                
+                // Update navigation background
+                if (scrollY > 100) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+
+                // Update active navigation link
+                const sections = document.querySelectorAll('section[id]');
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 150;
+                    const sectionHeight = section.offsetHeight;
+                    const sectionId = section.getAttribute('id');
+                    
+                    if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${sectionId}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+
+                // Animate elements on scroll
+                animateOnScroll();
+            }
+
+            // Scroll animations
+            function animateOnScroll() {
+                const elements = document.querySelectorAll('.section-title, .about-left, .about-stats, .service-card, .portfolio-item, .portfolio-subtitle, .contact-info, .contact-form, .services-intro');
+                
+                elements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 100;
+                    
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.classList.add('animate');
+                    }
+                });
+            }
+
+            // Throttled scroll event
+            let scrollTimeout;
+            window.addEventListener('scroll', function() {
+                if (scrollTimeout) {
+                    clearTimeout(scrollTimeout);
+                }
+                scrollTimeout = setTimeout(handleScroll, 10);
+            });
+
+            // Contact form handling
+            const contactForm = document.getElementById('contact-form');
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const formData = new FormData(this);
+                const name = formData.get('name');
+                const email = formData.get('email');
+                const subject = formData.get('subject');
+                const message = formData.get('message');
+
+                // Simple validation
+                if (!name || !email || !subject || !message) {
+                    const alertMsg = currentLang === 'cs' ? 
+                        'Prosím vyplňte všechna pole formuláře.' : 
+                        'Please fill in all form fields.';
+                    alert(alertMsg);
+                    return;
+                }
+
+                if (!isValidEmail(email)) {
+                    const alertMsg = currentLang === 'cs' ? 
+                        'Prosím zadejte platnou emailovou adresu.' : 
+                        'Please enter a valid email address.';
+                    alert(alertMsg);
+                    return;
+                }
+
+                // Success message
+                const successMsg = currentLang === 'cs' ? 
+                    'Vaše poptávka byla úspěšně odeslána! Ozveme se vám do 4 hodin.' : 
+                    'Your inquiry has been sent successfully! We will contact you within 4 hours.';
+                alert(successMsg);
+                this.reset();
+                
+                // Add success animation
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                const successText = currentLang === 'cs' ? 'Odesláno ✓' : 'Sent ✓';
+                submitBtn.textContent = successText;
+                submitBtn.style.background = '#27ca3f';
+                
+                setTimeout(() => {
+                    submitBtn.textContent = originalText;
+                    submitBtn.style.background = '';
+                }, 3000);
+            });
+
+            // Email validation
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+
+            // Service cards hover effects
+            const serviceCards = document.querySelectorAll('.service-card');
+            serviceCards.forEach((card, index) => {
+                card.style.transitionDelay = `${index * 0.1}s`;
+                
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-15px) scale(1.02)';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Portfolio items hover effects
+            const portfolioItems = document.querySelectorAll('.portfolio-item');
+            portfolioItems.forEach((item, index) => {
+                item.style.transitionDelay = `${index * 0.1}s`;
+            });
+
+            // Initialize animations
+            animateOnScroll();
+            handleScroll();
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    navMenu.classList.remove('active');
+                    const bars = navToggle.querySelectorAll('.bar');
+                    bars[0].style.transform = 'none';
+                    bars[1].style.opacity = '1';
+                    bars[2].style.transform = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
