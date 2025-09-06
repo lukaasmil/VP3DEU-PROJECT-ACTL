@@ -1555,21 +1555,24 @@
 
     <div class="vp3d-viewport" id="partnersViewport">
       <ul class="vp3d-track" id="partnersTrack">
-        <!-- EDITUJ JEN TADY -->
+        <!-- EDITUJ JEN TADY: přidej/odeber loga -->
         <li><img src="images/vynktech.png"   alt="Kofola"   loading="lazy"></li>
         <li><img src="images/siemens.svg"  alt="Siemens"  loading="lazy"></li>
         <li><img src="images/cnc.png"      alt="CNC"      loading="lazy"></li>
         <li><img src="images/sperkari.png" alt="Šperkaři" loading="lazy"></li>
+        <!-- tip: přidej další <li><img …></li> -->
       </ul>
     </div>
   </div>
 </section>
 
 <style>
+/* ===== VP3D – partners (logos only, BIG) ===== */
 .vp3d-partners{
   --bg:#0b0b0c; --text:#fff; --accent:#e10600;
-  --gap:clamp(32px,6vw,64px);   /* mezery mezi logy */
-  --speed:28s;
+  --gap:clamp(40px, 8vw, 120px);           /* mezery mezi logy */
+  --logo-h:clamp(56px, 10vw, 120px);       /* VELIKOST LOGA */
+  --speed:28s;                              /* vyšší = pomalejší posuv */
   background:var(--bg); color:var(--text);
   padding:clamp(32px,6vw,72px) 0;
 }
@@ -1578,34 +1581,38 @@
   font-size:clamp(28px,4vw,40px); font-weight:800; margin:0 0 14px;
 }
 .vp3d-title:after{
-  content:""; display:block; height:3px; width:180px;   /* kratší červená linka */
+  content:""; display:block; height:3px; width:160px;       /* kratší červená linka */
   background:var(--accent); margin-top:10px; border-radius:3px;
 }
 
+/* viewport: one row, tall enough for big logos */
 .vp3d-viewport{
-  overflow:hidden; position:relative; height:80px; /* výška stripu */
+  overflow:hidden; position:relative; height:calc(var(--logo-h) + 8px);
   -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%);
           mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%);
 }
 
+/* horizontal track (JS will duplicate for seamless loop) */
 .vp3d-track{
   display:inline-flex; align-items:center; gap:var(--gap);
-  list-style:none; margin:0; padding:0;
+  list-style:none; margin:0; padding:0; height:100%;
+  white-space:nowrap; width:max-content;
   animation:vp3d-right var(--speed) linear infinite;
-  width:max-content; white-space:nowrap;
 }
 
 .vp3d-track li{ flex:0 0 auto; }
 .vp3d-track img{
-  height:60px;   /* jednotná výška log */
-  width:auto;
-  object-fit:contain;
-  display:block;
+  height:var(--logo-h); width:auto; object-fit:contain; display:block;
 }
+
+/* optional per-logo tweaks (use on <img> if needed) */
+/* .logo-wide { height:calc(var(--logo-h) * 0.85); } */
+/* .logo-tall { height:calc(var(--logo-h) * 1.05); } */
 
 .vp3d-viewport:hover .vp3d-track{ animation-play-state:paused; }
 @media (prefers-reduced-motion:reduce){ .vp3d-track{ animation:none; } }
 
+/* move to the RIGHT across two identical tracks: -50% -> 0% */
 @keyframes vp3d-right{
   0%{ transform:translateX(-50%); }
   100%{ transform:translateX(0%); }
@@ -1613,13 +1620,40 @@
 </style>
 
 <script>
+/* Duplicate the row for a seamless rightward loop (still one visible line) */
 (function(){
   const viewport = document.getElementById('partnersViewport');
   const track = document.getElementById('partnersTrack');
   if(!viewport || !track) return;
+
   const dupe = track.cloneNode(true);
   dupe.setAttribute('aria-hidden','true');
   viewport.appendChild(dupe);
+
+  // If the row is narrower than the viewport, repeat items so it fills nicely
+  function ensureFill(){
+    const vw = viewport.clientWidth;
+    const tw = track.scrollWidth;
+    if(tw && tw < vw){
+      const copies = Math.ceil(vw / tw) + 1;
+      let html = '';
+      for(let i=0;i<copies;i++) html += track.innerHTML;
+      track.innerHTML = html;
+      dupe.innerHTML  = html;
+    }
+  }
+  ensureFill();
+  window.addEventListener('resize', ensureFill, {passive:true});
+
+  // If an image fails, show alt text instead of a broken icon
+  viewport.querySelectorAll('img').forEach(img=>{
+    img.addEventListener('error', ()=>{
+      const fallback = document.createElement('span');
+      fallback.textContent = img.alt || 'Logo';
+      fallback.style.cssText = 'font-weight:700;color:#d0d0d0;font-size:clamp(16px,2.2vw,24px);';
+      img.replaceWith(fallback);
+    }, {once:true});
+  });
 })();
 </script>
 
