@@ -1548,6 +1548,108 @@
             </div>
         </div>
     </section>
+    
+<section class="vp3d-partners" aria-label="Spolupracujeme">
+  <div class="vp3d-container">
+    <h2 class="vp3d-title">Spolupracujeme</h2>
+
+    <!-- viewport -->
+    <div class="vp3d-viewport">
+      <!-- track (two copies for seamless loop) -->
+      <ul class="vp3d-track">
+        <!-- ===== EDITUJ: sem přidávej firmy ===== -->
+        <li class="vp3d-card"><img src="/assets/logos/kofola.svg"   alt="Kofola"></li>
+        <li class="vp3d-card"><img src="/assets/logos/siemens.svg"  alt="Siemens"></li>
+        <li class="vp3d-card"><img src="/assets/logos/cnc.svg"      alt="CNC"></li>
+        <li class="vp3d-card"><img src="/assets/logos/sperkari.svg" alt="Šperkaři"></li>
+        <!-- ===== /EDITUJ ===== -->
+      </ul>
+
+      <!-- duplicate (NECH – zajišťuje nekonečnou smyčku) -->
+      <ul class="vp3d-track vp3d-track--dupe" aria-hidden="true">
+        <li class="vp3d-card"><img src="/assets/logos/kofola.svg"   alt=""></li>
+        <li class="vp3d-card"><img src="/assets/logos/siemens.svg"  alt=""></li>
+        <li class="vp3d-card"><img src="/assets/logos/cnc.svg"      alt=""></li>
+        <li class="vp3d-card"><img src="/assets/logos/sperkari.svg" alt=""></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+/* ===== VP3D Partners (clean, dark, premium) ===== */
+.vp3d-partners{
+  --bg:#0a0a0a;
+  --text:#fff;
+  --accent:#e10600;                /* VP3D red */
+  --card-bg:rgba(255,255,255,.02);
+  --card-bd:rgba(255,255,255,.10);
+  --card-bd-hover:rgba(225,6,0,.55);
+  --radius:18px;
+  --gap:clamp(16px,2.8vw,28px);
+  --card-w:clamp(160px,20vw,260px);
+  --card-h:clamp(84px,10vw,110px);
+  --speed:28s;                     /* vyšší = pomalejší */
+  background:var(--bg);
+  color:var(--text);
+  padding:clamp(36px,6vw,84px) 0;
+}
+
+.vp3d-container{max-width:1200px;margin:0 auto;padding:0 clamp(16px,5vw,56px);}
+.vp3d-title{
+  font-size:clamp(28px,4vw,40px);
+  font-weight:800; letter-spacing:.3px; margin:0 0 18px 0; position:relative; display:inline-block;
+}
+.vp3d-title:after{
+  content:""; display:block; height:3px; width:56%; background:var(--accent);
+  margin-top:10px; border-radius:2px;
+}
+
+/* viewport with soft masks */
+.vp3d-viewport{
+  overflow:hidden; position:relative;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0, #000 6%, #000 94%, transparent 100%);
+          mask-image:linear-gradient(90deg,transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+
+/* horizontal track – two copies run side-by-side */
+.vp3d-track{
+  display:inline-flex; gap:var(--gap); list-style:none; padding:8px 0; margin:0;
+  /* move RIGHT: from -50% -> 0% */
+  animation:vp3d-right var(--speed) linear infinite;
+  will-change:transform;
+}
+.vp3d-track--dupe{ margin-left:var(--gap); }
+
+/* cards */
+.vp3d-card{
+  flex:0 0 var(--card-w); height:var(--card-h);
+  border-radius:var(--radius);
+  background:var(--card-bg);
+  border:1px solid var(--card-bd);
+  backdrop-filter:saturate(120%) blur(2px);
+  display:grid; place-items:center;
+  transition:border-color .2s ease, transform .2s ease;
+}
+.vp3d-card:hover{ border-color:var(--card-bd-hover); transform:translateY(-2px); }
+
+.vp3d-card img{
+  max-width:78%; max-height:70%; object-fit:contain;
+  filter:invert(1) brightness(.9) contrast(1.1);           /* bílé logo */
+  opacity:.85; transition:opacity .2s ease, filter .2s ease;
+}
+.vp3d-card:hover img{ opacity:1; filter:invert(1) brightness(1) contrast(1.2); }
+
+/* pause when user engages */
+.vp3d-viewport:hover .vp3d-track{ animation-play-state:paused; }
+@media (prefers-reduced-motion:reduce){ .vp3d-track{ animation:none; } }
+
+/* keyframes: two equal tracks; translate from -50% to 0 to scroll right */
+@keyframes vp3d-right{
+  0%{   transform:translateX(-50%); }
+  100%{ transform:translateX(0%);   }
+}
+</style>
 
     <!-- Portfolio Section -->
     <section id="portfolio" class="section portfolio">
