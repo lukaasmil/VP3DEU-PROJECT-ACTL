@@ -1550,98 +1550,78 @@
     </section>
     
 <section class="vp3d-partners" aria-label="Spolupracujeme">
-  <div class="vp3d-container">
+  <div class="vp3d-wrap">
     <h2 class="vp3d-title">Spolupracujeme</h2>
 
-    <!-- viewport -->
-    <div class="vp3d-viewport">
-      <!-- track (two copies for seamless loop) -->
-      <ul class="vp3d-track">
-        <!-- ===== EDITUJ: sem přidávej firmy ===== -->
-        <li class="vp3d-card"><img src="images/vynktech.png"   alt="CNC"></li>
-        <li class="vp3d-card"><img src="images/cnc3d.png"  alt="Siemens"></li>
-        <li class="vp3d-card"><img src="images/cnc3d.png"      alt="Kofola"></li>
-        <li class="vp3d-card"><img src="images/cnc3d.png" alt="Šperkaři"></li>
-        <!-- ===== /EDITUJ ===== -->
+    <div class="vp3d-viewport" id="partnersViewport">
+      <ul class="vp3d-track" id="partnersTrack">
+        <!-- EDITUJ JEN TADY -->
+        <li><img src="images/vynktech.png"   alt="Kofola"   loading="lazy"></li>
+        <li><img src="images/siemens.svg"  alt="Siemens"  loading="lazy"></li>
+        <li><img src="images/cnc.png"      alt="CNC"      loading="lazy"></li>
+        <li><img src="images/sperkari.png" alt="Šperkaři" loading="lazy"></li>
       </ul>
+    </div>
   </div>
 </section>
 
 <style>
-/* ===== VP3D Partners (clean, dark, premium) ===== */
 .vp3d-partners{
-  --bg:#0a0a0a;
-  --text:#fff;
-  --accent:#e10600;                /* VP3D red */
-  --card-bg:rgba(255,255,255,.02);
-  --card-bd:rgba(255,255,255,.10);
-  --card-bd-hover:rgba(225,6,0,.55);
-  --radius:18px;
-  --gap:clamp(16px,2.8vw,28px);
-  --card-w:clamp(160px,20vw,260px);
-  --card-h:clamp(84px,10vw,110px);
-  --speed:15s;                     /* vyšší = pomalejší */
-  background:var(--bg);
-  color:var(--text);
-  padding:clamp(36px,6vw,84px) 0;
+  --bg:#0b0b0c; --text:#fff; --accent:#e10600;
+  --gap:clamp(32px,6vw,64px);   /* mezery mezi logy */
+  --speed:28s;
+  background:var(--bg); color:var(--text);
+  padding:clamp(32px,6vw,72px) 0;
 }
-
-.vp3d-container{max-width:1200px;margin:0 auto;padding:0 clamp(16px,5vw,56px);}
+.vp3d-wrap{max-width:1200px;margin:0 auto;padding:0 clamp(16px,5vw,56px);}
 .vp3d-title{
-  font-size:clamp(28px,4vw,40px);
-  font-weight:800; letter-spacing:.3px; margin:0 0 18px 0; position:relative; display:inline-block;
+  font-size:clamp(28px,4vw,40px); font-weight:800; margin:0 0 14px;
 }
 .vp3d-title:after{
-  content:""; display:block; height:3px; width:56%; background:var(--accent);
-  margin-top:10px; border-radius:2px;
+  content:""; display:block; height:3px; width:180px;   /* kratší červená linka */
+  background:var(--accent); margin-top:10px; border-radius:3px;
 }
 
-/* viewport with soft masks */
 .vp3d-viewport{
-  overflow:hidden; position:relative;
-  -webkit-mask-image:linear-gradient(90deg,transparent 0, #000 6%, #000 94%, transparent 100%);
-          mask-image:linear-gradient(90deg,transparent 0, #000 6%, #000 94%, transparent 100%);
+  overflow:hidden; position:relative; height:80px; /* výška stripu */
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%);
+          mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%);
 }
 
-/* horizontal track – two copies run side-by-side */
 .vp3d-track{
-  display:inline-flex; gap:var(--gap); list-style:none; padding:8px 0; margin:0;
-  /* move RIGHT: from -50% -> 0% */
+  display:inline-flex; align-items:center; gap:var(--gap);
+  list-style:none; margin:0; padding:0;
   animation:vp3d-right var(--speed) linear infinite;
-  will-change:transform;
+  width:max-content; white-space:nowrap;
 }
-.vp3d-track--dupe{ margin-left:var(--gap); }
 
-/* cards */
-.vp3d-card{
-  flex:0 0 var(--card-w); height:var(--card-h);
-  border-radius:var(--radius);
-  background:var(--card-bg);
-  border:1px solid var(--card-bd);
-  backdrop-filter:saturate(120%) blur(2px);
-  display:grid; place-items:center;
-  transition:border-color .2s ease, transform .2s ease;
+.vp3d-track li{ flex:0 0 auto; }
+.vp3d-track img{
+  height:60px;   /* jednotná výška log */
+  width:auto;
+  object-fit:contain;
+  display:block;
 }
-.vp3d-card:hover{ border-color:var(--card-bd-hover); transform:translateY(-2px); }
 
-.vp3d-card img{
-  max-width:78%; max-height:70%; object-fit:contain;
-  filter:invert(1) brightness(.9) contrast(1.1);           /* bílé logo */
-  opacity:.85; transition:opacity .2s ease, filter .2s ease;
-}
-.vp3d-card:hover img{ opacity:1; filter:invert(1) brightness(1) contrast(1.2); }
-
-/* pause when user engages */
 .vp3d-viewport:hover .vp3d-track{ animation-play-state:paused; }
 @media (prefers-reduced-motion:reduce){ .vp3d-track{ animation:none; } }
 
-/* keyframes: two equal tracks; translate from -50% to 0 to scroll right */
 @keyframes vp3d-right{
-  0%{   transform:translateX(-50%); }
-  100%{ transform:translateX(0%);   }
+  0%{ transform:translateX(-50%); }
+  100%{ transform:translateX(0%); }
 }
 </style>
 
+<script>
+(function(){
+  const viewport = document.getElementById('partnersViewport');
+  const track = document.getElementById('partnersTrack');
+  if(!viewport || !track) return;
+  const dupe = track.cloneNode(true);
+  dupe.setAttribute('aria-hidden','true');
+  viewport.appendChild(dupe);
+})();
+</script>
 
     <!-- Portfolio Section -->
     <section id="portfolio" class="section portfolio">
